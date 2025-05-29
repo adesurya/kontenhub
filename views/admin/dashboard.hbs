@@ -1,0 +1,498 @@
+<div class="container">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <h1 class="dashboard-welcome">Admin Dashboard</h1>
+        <p class="dashboard-subtitle">Welcome back, {{user.full_name}}! Here's what's happening with your platform.</p>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-header">
+                <h3 class="stat-title">Total Users</h3>
+                <div class="stat-icon primary">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{stats.totalUsers}}</div>
+            <div class="stat-change positive">
+                <i class="fas fa-arrow-up"></i>
+                +12% from last month
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-header">
+                <h3 class="stat-title">Media Files</h3>
+                <div class="stat-icon secondary">
+                    <i class="fas fa-photo-video"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{stats.totalMedia}}</div>
+            <div class="stat-change positive">
+                <i class="fas fa-arrow-up"></i>
+                +8% from last month
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-header">
+                <h3 class="stat-title">Transactions</h3>
+                <div class="stat-icon success">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{stats.totalTransactions}}</div>
+            <div class="stat-change positive">
+                <i class="fas fa-arrow-up"></i>
+                +25% from last month
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-header">
+                <h3 class="stat-title">Active Subscriptions</h3>
+                <div class="stat-icon warning">
+                    <i class="fas fa-crown"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{stats.activeSubscriptions}}</div>
+            <div class="stat-change positive">
+                <i class="fas fa-arrow-up"></i>
+                +18% from last month
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <h2 class="section-title">Quick Actions</h2>
+        <div class="action-grid">
+            <a href="/admin/media/upload" class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <h3>Upload Media</h3>
+                <p>Add new files to your media library</p>
+            </a>
+            
+            <a href="/admin/users" class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <h3>Manage Users</h3>
+                <p>View and manage user accounts</p>
+            </a>
+            
+            <a href="/admin/categories" class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <h3>Categories</h3>
+                <p>Organize your media content</p>
+            </a>
+            
+            <a href="/admin/subscriptions" class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-gem"></i>
+                </div>
+                <h3>Packages</h3>
+                <p>Manage subscription plans</p>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Recent Activity -->
+    <div class="grid grid-cols-2 gap-8">
+        <!-- Recent Users -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Recent Users</h3>
+                <a href="/admin/users" class="btn btn-ghost btn-sm">View All</a>
+            </div>
+            <div class="card-body">
+                {{#if stats.recentUsers}}
+                    <div class="user-list">
+                        {{#each stats.recentUsers}}
+                            <div class="user-item">
+                                <div class="user-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="user-info">
+                                    <div class="user-name">{{full_name}}</div>
+                                    <div class="user-email">{{email}}</div>
+                                </div>
+                                <div class="user-date">
+                                    {{formatDate created_at}}
+                                </div>
+                            </div>
+                        {{/each}}
+                    </div>
+                {{else}}
+                    <div class="empty-state">
+                        <i class="fas fa-users"></i>
+                        <p>No recent users</p>
+                    </div>
+                {{/if}}
+            </div>
+        </div>
+        
+        <!-- Recent Media -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Recent Media</h3>
+                <a href="/admin/media/list" class="btn btn-ghost btn-sm">View All</a>
+            </div>
+            <div class="card-body">
+                {{#if stats.recentMedia}}
+                    <div class="media-list">
+                        {{#each stats.recentMedia}}
+                            <div class="media-item">
+                                <div class="media-thumbnail">
+                                    {{#if thumbnail_url}}
+                                        <img src="{{thumbnail_url}}" alt="{{title}}">
+                                    {{else}}
+                                        <i class="fas {{#if (eq file_type 'image')}}fa-image{{else if (eq file_type 'audio')}}fa-music{{else}}fa-video{{/if}}"></i>
+                                    {{/if}}
+                                </div>
+                                <div class="media-info">
+                                    <div class="media-title">{{title}}</div>
+                                    <div class="media-meta">
+                                        <span class="media-category">{{category.name}}</span>
+                                        <span class="media-type">{{file_type}}</span>
+                                    </div>
+                                </div>
+                                <div class="media-stats">
+                                    <div class="stat-item">
+                                        <i class="fas fa-download"></i>
+                                        {{download_count}}
+                                    </div>
+                                </div>
+                            </div>
+                        {{/each}}
+                    </div>
+                {{else}}
+                    <div class="empty-state">
+                        <i class="fas fa-photo-video"></i>
+                        <p>No recent media</p>
+                    </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Analytics Chart -->
+    {{#if stats.monthlyStats}}
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Monthly Overview</h3>
+                <div class="chart-controls">
+                    <button class="btn btn-ghost btn-sm" data-chart="users">Users</button>
+                    <button class="btn btn-ghost btn-sm active" data-chart="media">Media</button>
+                    <button class="btn btn-ghost btn-sm" data-chart="transactions">Transactions</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="monthlyChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    {{/if}}
+</div>
+
+<style>
+.action-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-6);
+    margin-top: var(--spacing-6);
+}
+
+.action-card {
+    display: block;
+    padding: var(--spacing-6);
+    background: var(--dark-surface);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-xl);
+    text-decoration: none;
+    color: var(--dark-text);
+    transition: all var(--transition-fast);
+    text-align: center;
+}
+
+.action-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-lg);
+}
+
+.action-icon {
+    width: 60px;
+    height: 60px;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--spacing-4);
+    font-size: var(--font-size-2xl);
+    color: white;
+}
+
+.action-card h3 {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    margin-bottom: var(--spacing-2);
+}
+
+.action-card p {
+    color: var(--dark-text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+.user-list, .media-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+}
+
+.user-item, .media-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3);
+    border-radius: var(--radius-lg);
+    transition: background var(--transition-fast);
+}
+
+.user-item:hover, .media-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: var(--font-size-sm);
+}
+
+.media-thumbnail {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-lg);
+    background: var(--dark-surface-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.media-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.media-thumbnail i {
+    color: var(--primary-color);
+}
+
+.user-info, .media-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-name, .media-title {
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-email, .media-meta {
+    color: var(--dark-text-secondary);
+    font-size: var(--font-size-sm);
+    margin-top: var(--spacing-1);
+}
+
+.media-meta {
+    display: flex;
+    gap: var(--spacing-2);
+}
+
+.media-category {
+    padding: var(--spacing-1) var(--spacing-2);
+    background: rgba(254, 44, 85, 0.1);
+    color: var(--primary-color);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+}
+
+.media-type {
+    text-transform: capitalize;
+}
+
+.user-date, .media-stats {
+    color: var(--dark-text-secondary);
+    font-size: var(--font-size-sm);
+    text-align: right;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+}
+
+.empty-state {
+    text-align: center;
+    padding: var(--spacing-8);
+    color: var(--dark-text-secondary);
+}
+
+.empty-state i {
+    font-size: var(--font-size-3xl);
+    margin-bottom: var(--spacing-4);
+    opacity: 0.5;
+}
+
+.chart-controls {
+    display: flex;
+    gap: var(--spacing-2);
+}
+
+.chart-controls .btn.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.section-title {
+    font-size: var(--font-size-2xl);
+    font-weight: 600;
+    margin-bottom: var(--spacing-4);
+    color: var(--dark-text);
+}
+</style>
+
+<script>
+// Chart.js implementation for monthly stats
+document.addEventListener('DOMContentLoaded', function() {
+    const chartCanvas = document.getElementById('monthlyChart');
+    if (chartCanvas && typeof Chart !== 'undefined') {
+        const ctx = chartCanvas.getContext('2d');
+        
+        // Monthly stats data from server
+        const monthlyData = {{{json stats.monthlyStats}}};
+        
+        const chartData = {
+            labels: monthlyData.map(item => item.month),
+            datasets: [{
+                label: 'Media Files',
+                data: monthlyData.map(item => item.media),
+                borderColor: '#fe2c55',
+                backgroundColor: 'rgba(254, 44, 85, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4
+            }]
+        };
+        
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#a1a1aa'
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#a1a1aa'
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Chart type switching
+        document.querySelectorAll('[data-chart]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Update active button
+                document.querySelectorAll('[data-chart]').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const dataType = this.dataset.chart;
+                let newData, label, color;
+                
+                switch(dataType) {
+                    case 'users':
+                        newData = monthlyData.map(item => item.users);
+                        label = 'New Users';
+                        color = '#25f4ee';
+                        break;
+                    case 'transactions':
+                        newData = monthlyData.map(item => item.transactions);
+                        label = 'Transactions';
+                        color = '#10b981';
+                        break;
+                    default:
+                        newData = monthlyData.map(item => item.media);
+                        label = 'Media Files';
+                        color = '#fe2c55';
+                }
+                
+                chart.data.datasets[0].data = newData;
+                chart.data.datasets[0].label = label;
+                chart.data.datasets[0].borderColor = color;
+                chart.data.datasets[0].backgroundColor = color + '20';
+                chart.update();
+            });
+        });
+    }
+});
+
+// Real-time updates (optional)
+function updateStats() {
+    fetch('/api/admin/stats')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update stat values
+                document.querySelectorAll('.stat-value').forEach((el, index) => {
+                    const stats = [
+                        data.data.totalUsers,
+                        data.data.totalMedia,
+                        data.data.totalTransactions,
+                        data.data.activeSubscriptions
+                    ];
+                    if (stats[index] !== undefined) {
+                        el.textContent = stats[index];
+                    }
+                });
+            }
+        })
+        .catch(error => console.error('Failed to update stats:', error));
+}
+
+// Update stats every 5 minutes
+setInterval(updateStats, 5 * 60 * 1000);
+</script>

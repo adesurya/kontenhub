@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | MediaHub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <div class="brand-icon">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                    <span class="brand-text">MediaHub</span>
+                </div>
+                <h1 class="auth-title">Create Account</h1>
+                <p class="auth-subtitle">Join thousands of creators and start your journey</p>
+            </div>
+            
+            <form action="/api/auth/register" method="POST" class="auth-form">
+                <div class="form-group">
+                    <label for="full_name" class="form-label">Full Name</label>
+                    <input 
+                        type="text" 
+                        id="full_name" 
+                        name="full_name" 
+                        class="form-input" 
+                        placeholder="Enter your full name"
+                        required
+                        autocomplete="name"
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="username" class="form-label">Username</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        class="form-input" 
+                        placeholder="Choose a username"
+                        required
+                        autocomplete="username"
+                        pattern="[a-zA-Z0-9]+"
+                        title="Username can only contain letters and numbers"
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        class="form-input" 
+                        placeholder="Enter your email"
+                        required
+                        autocomplete="email"
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone" class="form-label">Phone Number <span class="optional">(Optional)</span></label>
+                    <input 
+                        type="tel" 
+                        id="phone" 
+                        name="phone" 
+                        class="form-input" 
+                        placeholder="Enter your phone number"
+                        autocomplete="tel"
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="password-input-container">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="form-input" 
+                            placeholder="Create a strong password"
+                            required
+                            autocomplete="new-password"
+                            minlength="6"
+                        >
+                        <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="password-strength">
+                        <div class="strength-bar"></div>
+                        <div class="strength-text"></div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirm_password" class="form-label">Confirm Password</label>
+                    <div class="password-input-container">
+                        <input 
+                            type="password" 
+                            id="confirm_password" 
+                            name="confirm_password" 
+                            class="form-input" 
+                            placeholder="Confirm your password"
+                            required
+                            autocomplete="new-password"
+                        >
+                        <button type="button" class="password-toggle" onclick="togglePassword('confirm_password')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="terms" required>
+                        <span class="checkmark"></span>
+                        I agree to the <a href="/terms" target="_blank" class="text-primary">Terms of Service</a> and <a href="/privacy" target="_blank" class="text-primary">Privacy Policy</a>
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="newsletter">
+                        <span class="checkmark"></span>
+                        Subscribe to our newsletter for updates and exclusive content
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-lg w-full">
+                    <i class="fas fa-user-plus"></i>
+                    Create Account
+                </button>
+            </form>
+            
+            <div class="auth-divider">
+                <span>or</span>
+            </div>
+            
+            <div class="social-login">
+                <button class="btn btn-secondary w-full" style="margin-bottom: 12px;">
+                    <i class="fab fa-google"></i>
+                    Continue with Google
+                </button>
+                <button class="btn btn-secondary w-full">
+                    <i class="fab fa-facebook"></i>
+                    Continue with Facebook
+                </button>
+            </div>
+            
+            <div class="auth-footer">
+                <p class="text-center text-muted">
+                    Already have an account? 
+                    <a href="/login" class="text-primary">Sign in here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const toggle = input.nextElementSibling;
+            const icon = toggle.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+        
+        // Password strength indicator
+        $('#password').on('input', function() {
+            const password = $(this).val();
+            const strength = calculatePasswordStrength(password);
+            
+            $('.strength-bar').removeClass('weak medium strong').addClass(strength.class);
+            $('.strength-bar').css('width', strength.percentage + '%');
+            $('.strength-text').text(strength.text);
+        });
+        
+        // Password confirmation validation
+        $('#confirm_password').on('input', function() {
+            const password = $('#password').val();
+            const confirmPassword = $(this).val();
+            
+            if (confirmPassword && password !== confirmPassword) {
+                $(this).addClass('error');
+                if (!$(this).siblings('.error-message').length) {
+                    $(this).after('<div class="error-message">Passwords do not match</div>');
+                }
+            } else {
+                $(this).removeClass('error');
+                $(this).siblings('.error-message').remove();
+            }
+        });
+        
+        // Username availability check
+        let usernameTimeout;
+        $('#username').on('input', function() {
+            const username = $(this).val();
+            const field = $(this);
+            
+            clearTimeout(usernameTimeout);
+            
+            if (username.length >= 3) {
+                usernameTimeout = setTimeout(() => {
+                    checkUsernameAvailability(username, field);
+                }, 500);
+            }
+        });
+        
+        function checkUsernameAvailability(username, field) {
+            $.ajax({
+                url: '/api/auth/check-username',
+                method: 'POST',
+                data: { username: username },
+                success: function(response) {
+                    if (response.available) {
+                        field.removeClass('error').addClass('success');
+                        field.siblings('.error-message').remove();
+                        if (!field.siblings('.success-message').length) {
+                            field.after('<div class="success-message">Username is available</div>');
+                        }
+                    } else {
+                        field.removeClass('success').addClass('error');
+                        field.siblings('.success-message').remove();
+                        if (!field.siblings('.error-message').length) {
+                            field.after('<div class="error-message">Username is already taken</div>');
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Form submission
+        $('.auth-form').on('submit', function(e) {
+            e.preventDefault();
+            
+            const form = $(this);
+            const submitBtn = form.find('button[type="submit"]');
+            const originalText = submitBtn.html();
+            
+            // Validate passwords match
+            const password = $('#password').val();
+            const confirmPassword = $('#confirm_password').val();
+            
+            if (password !== confirmPassword) {
+                showError('Passwords do not match');
+                return;
+            }
+            
+            // Show loading state
+            submitBtn.prop('disabled', true);
+            submitBtn.html('<div class="spinner"></div> Creating account...');
+            
+            // Submit form
+            $.ajax({
+                url: form.attr('action'),
+                method: 'POST',
+                data: form.serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        showSuccess('Account created successfully! Redirecting...');
+                        setTimeout(() => {
+                            window.location.href = '/user/dashboard';
+                        }, 1500);
+                    }
+                },
+                error: function(xhr) {
+                    const response = xhr.responseJSON;
+                    if (response.errors) {
+                        // Show validation errors
+                        response.errors.forEach(error => {
+                            const field = $(`[name="${error.field}"]`);
+                            field.addClass('error');
+                            if (!field.siblings('.error-message').length) {
+                                field.after(`<div class="error-message">${error.message}</div>`);
+                            }
+                        });
+                    } else {
+                        showError(response.message || 'Registration failed. Please try again.');
+                    }
+                },
+                complete: function() {
+                    submitBtn.prop('disabled', false);
+                    submitBtn.html(originalText);
+                }
+            });
+        });
+        
+        function calculatePasswordStrength(password) {
+            let score = 0;
+            
+            if (password.length >= 8) score += 1;
+            if (password.length >= 12) score += 1;
+            if (/[a-z]/.test(password)) score += 1;
+            if (/[A-Z]/.test(password)) score += 1;
+            if (/[0-9]/.test(password)) score += 1;
+            if (/[^A-Za-z0-9]/.test(password)) score += 1;
+            
+            if (score < 3) {
+                return { class: 'weak', percentage: 25, text: 'Weak' };
+            } else if (score < 5) {
+                return { class: 'medium', percentage: 60, text: 'Medium' };
+            } else {
+                return { class: 'strong', percentage: 100, text: 'Strong' };
+            }
+        }
+        
+        function showError(message) {
+            $('.error-message').remove();
+            const errorDiv = $(`
+                <div class="error-message" style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: 0.5rem; color: #ef4444; text-align: center;">
+                    <i class="fas fa-exclamation-circle"></i> ${message}
+                </div>
+            `);
+            $('.auth-form').prepend(errorDiv);
+            setTimeout(() => errorDiv.fadeOut(), 5000);
+        }
+        
+        function showSuccess(message) {
+            $('.error-message').remove();
+            const successDiv = $(`
+                <div class="success-message" style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 0.5rem; color: #10b981; text-align: center;">
+                    <i class="fas fa-check-circle"></i> ${message}
+                </div>
+            `);
+            $('.auth-form').prepend(successDiv);
+        }
+    </script>
+    
+    <style>
+        .optional {
+            font-weight: 400;
+            color: var(--dark-text-secondary);
+            font-size: var(--font-size-sm);
+        }
+        
+        .password-input-container {
+            position: relative;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: var(--dark-text-secondary);
+            cursor: pointer;
+            padding: 4px;
+        }
+        
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+        
+        .password-strength {
+            margin-top: 8px;
+        }
+        
+        .strength-bar {
+            height: 4px;
+            border-radius: 2px;
+            background: var(--dark-surface-2);
+            transition: all 0.3s ease;
+            margin-bottom: 4px;
+        }
+        
+        .strength-bar.weak {
+            background: #ef4444;
+        }
+        
+        .strength-bar.medium {
+            background: #f59e0b;
+        }
+        
+        .strength-bar.strong {
+            background: #10b981;
+        }
+        
+        .strength-text {
+            font-size: var(--font-size-xs);
+            color: var(--dark-text-secondary);
+        }
+        
+        .auth-divider {
+            text-align: center;
+            margin: 24px 0;
+            position: relative;
+        }
+        
+        .auth-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .auth-divider span {
+            background: var(--dark-surface);
+            padding: 0 16px;
+            color: var(--dark-text-secondary);
+            font-size: var(--font-size-sm);
+        }
+        
+        .social-login {
+            margin-bottom: 24px;
+        }
+        
+        .form-input.error {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+        
+        .form-input.success {
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        
+        .error-message {
+            color: #ef4444;
+            font-size: var(--font-size-sm);
+            margin-top: 4px;
+        }
+        
+        .success-message {
+            color: #10b981;
+            font-size: var(--font-size-sm);
+            margin-top: 4px;
+        }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+            font-size: var(--font-size-sm);
+            line-height: 1.5;
+        }
+        
+        .checkbox-label input[type="checkbox"] {
+            display: none;
+        }
+        
+        .checkmark {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            position: relative;
+            flex-shrink: 0;
+            margin-top: 2px;
+            transition: all 0.2s ease;
+        }
+        
+        .checkbox-label input[type="checkbox"]:checked + .checkmark {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</body>
+</html>

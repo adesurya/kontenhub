@@ -1,0 +1,534 @@
+<div class="container">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <h1 class="dashboard-welcome">Welcome back, {{user.full_name}}!</h1>
+        <p class="dashboard-subtitle">Discover amazing content and manage your media library</p>
+    </div>
+    
+    <!-- Subscription Status -->
+    {{#if user.activeSubscription}}
+        <div class="subscription-status-card active">
+            <div class="subscription-header">
+                <div class="subscription-info">
+                    <h3>
+                        <i class="fas fa-crown"></i>
+                        {{user.activeSubscription.package.name}}
+                    </h3>
+                    <p>Active until {{formatDate user.activeSubscription.end_date}}</p>
+                </div>
+                <div class="subscription-badge premium">
+                    <i class="fas fa-star"></i>
+                    Premium
+                </div>
+            </div>
+            
+            <div class="subscription-stats">
+                <div class="stat-item">
+                    <div class="stat-value">{{user.activeSubscription.downloads_remaining}}</div>
+                    <div class="stat-label">Downloads Left</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{user.activeSubscription.downloads_used}}</div>
+                    <div class="stat-label">Downloads Used</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{getDaysRemaining user.activeSubscription}}</div>
+                    <div class="stat-label">Days Left</div>
+                </div>
+            </div>
+            
+            <div class="subscription-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{getUsagePercentage user.activeSubscription}}%"></div>
+                </div>
+                <p class="progress-text">{{getUsagePercentage user.activeSubscription}}% used</p>
+            </div>
+        </div>
+    {{else}}
+        <div class="subscription-status-card inactive">
+            <div class="subscription-header">
+                <div class="subscription-info">
+                    <h3>
+                        <i class="fas fa-user"></i>
+                        Free Account
+                    </h3>
+                    <p>Upgrade to premium for unlimited downloads</p>
+                </div>
+                <div class="subscription-badge free">
+                    <i class="fas fa-lock"></i>
+                    Limited
+                </div>
+            </div>
+            
+            <div class="subscription-cta">
+                <p>Unlock premium features with our subscription plans</p>
+                <a href="/user/subscribe" class="btn btn-primary">
+                    <i class="fas fa-crown"></i>
+                    Upgrade Now
+                </a>
+            </div>
+        </div>
+    {{/if}}
+    
+    <!-- Quick Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-header">
+                <h3 class="stat-title">Downloads</h3>
+                <div class="stat-icon primary">
+                    <i class="fas fa-download"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{stats.downloadCount}}</div>
+            <div class="stat-change">
+                <i class="fas fa-chart-line"></i>
+                This month
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-header">
+                <h3 class="stat-title">Wishlist</h3>
+                <div class="stat-icon secondary">
+                    <i class="fas fa-heart"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{stats.wishlistCount}}</div>
+            <div class="stat-change">
+                <a href="/user/wishlist" class="text-primary">View all</a>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-header">
+                <h3 class="stat-title">Subscription</h3>
+                <div class="stat-icon {{#if user.activeSubscription}}success{{else}}warning{{/if}}">
+                    <i class="fas {{#if user.activeSubscription}}fa-check{{else}}fa-exclamation{{/if}}"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{stats.subscriptionStatus}}</div>
+            <div class="stat-change">
+                {{#if user.activeSubscription}}
+                    <span class="text-success">{{stats.downloadsRemaining}} left</span>
+                {{else}}
+                    <a href="/user/subscribe" class="text-primary">Upgrade</a>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Featured Media -->
+    {{#if featuredMedia}}
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">Featured Content</h2>
+                <a href="/user/browse" class="btn btn-ghost">
+                    View All
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            
+            <div class="media-grid">
+                {{#each featuredMedia}}
+                    <div class="media-card featured" data-media-id="{{id}}">
+                        <div class="media-thumbnail">
+                            {{#if thumbnail_url}}
+                                <img src="{{thumbnail_url}}" alt="{{title}}" loading="lazy">
+                            {{else}}
+                                <div class="placeholder-icon">
+                                    <i class="fas {{#if (eq file_type 'image')}}fa-image{{else if (eq file_type 'audio')}}fa-music{{else}}fa-video{{/if}}"></i>
+                                </div>
+                            {{/if}}
+                            
+                            <div class="media-type-badge">{{file_type}}</div>
+                            <div class="featured-badge">Featured</div>
+                            
+                            <div class="media-actions">
+                                <button class="media-action-btn wishlist-btn" data-media-id="{{id}}" title="Add to Wishlist">
+                                    <i class="far fa-heart"></i>
+                                </button>
+                                <button class="media-action-btn preview-btn" data-media-id="{{id}}" title="Quick Preview">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="media-content">
+                            <h3 class="media-title">{{title}}</h3>
+                            <div class="media-meta">
+                                <span class="media-category">
+                                    <i class="{{category.icon}}"></i>
+                                    {{category.name}}
+                                </span>
+                                <span class="media-downloads">
+                                    <i class="fas fa-download"></i>
+                                    {{download_count}}
+                                </span>
+                            </div>
+                            
+                            {{#if description}}
+                                <p class="media-description">{{truncate description 100}}</p>
+                            {{/if}}
+                            
+                            <div class="media-footer">
+                                {{#if tags}}
+                                    <div class="media-tags">
+                                        {{#each tags}}
+                                            <span class="media-tag">{{this}}</span>
+                                        {{/each}}
+                                    </div>
+                                {{/if}}
+                                
+                                <button class="btn btn-primary btn-sm download-btn" data-media-id="{{id}}">
+                                    <i class="fas fa-download"></i>
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                {{/each}}
+            </div>
+        </div>
+    {{/if}}
+    
+    <!-- Recent Downloads -->
+    {{#if recentDownloads}}
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">Recent Downloads</h2>
+                <a href="/user/downloads" class="btn btn-ghost">
+                    View History
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            
+            <div class="download-list">
+                {{#each recentDownloads}}
+                    <div class="download-item">
+                        <div class="download-thumbnail">
+                            {{#if media.thumbnail_url}}
+                                <img src="{{media.thumbnail_url}}" alt="{{media.title}}">
+                            {{else}}
+                                <div class="file-icon">
+                                    <i class="fas {{#if (eq media.file_type 'image')}}fa-image{{else if (eq media.file_type 'audio')}}fa-music{{else}}fa-video{{/if}}"></i>
+                                </div>
+                            {{/if}}
+                        </div>
+                        
+                        <div class="download-info">
+                            <h4 class="download-title">{{media.title}}</h4>
+                            <div class="download-meta">
+                                <span class="download-category">{{media.category.name}}</span>
+                                <span class="download-date">{{formatDate created_at}}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="download-actions">
+                            {{#if (and download_url (not (isExpired this)))}}
+                                <a href="{{download_url}}" class="btn btn-sm btn-primary" target="_blank">
+                                    <i class="fas fa-download"></i>
+                                    Download Again
+                                </a>
+                            {{else}}
+                                <button class="btn btn-sm btn-ghost download-btn" data-media-id="{{media.id}}">
+                                    <i class="fas fa-redo"></i>
+                                    Re-download
+                                </button>
+                            {{/if}}
+                        </div>
+                    </div>
+                {{/each}}
+            </div>
+        </div>
+    {{/if}}
+    
+    <!-- Quick Actions -->
+    <div class="section">
+        <h2 class="section-title">Quick Actions</h2>
+        <div class="quick-actions-grid">
+            <a href="/user/browse" class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3>Browse Media</h3>
+                <p>Discover new content in our library</p>
+            </a>
+            
+            <a href="/user/wishlist" class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h3>My Wishlist</h3>
+                <p>View your saved favorite items</p>
+            </a>
+            
+            <a href="/user/subscribe" class="action-card {{#unless user.activeSubscription}}highlighted{{/unless}}">
+                <div class="action-icon">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <h3>{{#if user.activeSubscription}}Manage Plan{{else}}Upgrade Plan{{/if}}</h3>
+                <p>{{#if user.activeSubscription}}View your subscription details{{else}}Get unlimited downloads{{/if}}</p>
+            </a>
+            
+            <a href="/user/profile" class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-user-cog"></i>
+                </div>
+                <h3>Profile Settings</h3>
+                <p>Update your account information</p>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.subscription-status-card {
+    background: var(--dark-surface);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-6);
+    margin-bottom: var(--spacing-8);
+    position: relative;
+    overflow: hidden;
+}
+
+.subscription-status-card.active {
+    background: linear-gradient(135deg, rgba(254, 44, 85, 0.1), rgba(37, 244, 238, 0.1));
+    border-color: var(--primary-color);
+}
+
+.subscription-status-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-primary);
+}
+
+.subscription-status-card.inactive::before {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.subscription-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-4);
+}
+
+.subscription-info h3 {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    margin-bottom: var(--spacing-1);
+}
+
+.subscription-info p {
+    color: var(--dark-text-secondary);
+    margin: 0;
+}
+
+.subscription-badge {
+    padding: var(--spacing-2) var(--spacing-4);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+}
+
+.subscription-badge.premium {
+    background: var(--gradient-primary);
+    color: white;
+}
+
+.subscription-badge.free {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--dark-text-secondary);
+}
+
+.subscription-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-4);
+    margin-bottom: var(--spacing-4);
+}
+
+.subscription-progress {
+    margin-top: var(--spacing-4);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: var(--spacing-2);
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-full);
+    transition: width var(--transition-normal);
+}
+
+.progress-text {
+    font-size: var(--font-size-sm);
+    color: var(--dark-text-secondary);
+    text-align: center;
+    margin: 0;
+}
+
+.subscription-cta {
+    text-align: center;
+    padding: var(--spacing-4) 0;
+}
+
+.subscription-cta p {
+    margin-bottom: var(--spacing-4);
+    color: var(--dark-text-secondary);
+}
+
+.featured-badge {
+    position: absolute;
+    top: var(--spacing-2);
+    right: var(--spacing-2);
+    background: var(--gradient-primary);
+    color: white;
+    padding: var(--spacing-1) var(--spacing-2);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+}
+
+.download-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+}
+
+.download-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+    padding: var(--spacing-4);
+    background: var(--dark-surface);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-fast);
+}
+
+.download-item:hover {
+    border-color: var(--primary-color);
+    transform: translateX(4px);
+}
+
+.download-thumbnail {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.download-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.file-icon {
+    width: 100%;
+    height: 100%;
+    background: var(--dark-surface-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    font-size: var(--font-size-xl);
+}
+
+.download-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.download-title {
+    font-weight: 500;
+    margin-bottom: var(--spacing-1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.download-meta {
+    display: flex;
+    gap: var(--spacing-3);
+    color: var(--dark-text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-6);
+}
+
+.action-card.highlighted {
+    background: linear-gradient(135deg, rgba(254, 44, 85, 0.1), rgba(37, 244, 238, 0.1));
+    border-color: var(--primary-color);
+}
+
+.action-card.highlighted .action-icon {
+    background: var(--gradient-primary);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.section {
+    margin-bottom: var(--spacing-12);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-6);
+}
+
+.section-title {
+    font-size: var(--font-size-2xl);
+    font-weight: 600;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .subscription-stats {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-3);
+    }
+    
+    .download-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .download-thumbnail {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .quick-actions-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>

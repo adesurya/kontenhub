@@ -1,0 +1,159 @@
+<nav class="navbar">
+    <div class="navbar-container">
+        <!-- Logo -->
+        <div class="navbar-brand">
+            <a href="{{#if isAdmin}}/admin/dashboard{{else}}{{#if isLoggedIn}}/user/dashboard{{else}}/{{/if}}{{/if}}" class="brand-link">
+                <div class="brand-icon">
+                    <i class="fas fa-play-circle"></i>
+                </div>
+                <span class="brand-text">MediaHub</span>
+            </a>
+        </div>
+        
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" id="mobileMenuToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        
+        <!-- Navigation Links -->
+        <div class="navbar-menu" id="navbarMenu">
+            {{#if isLoggedIn}}
+                {{#if isAdmin}}
+                    <!-- Admin Navigation -->
+                    <div class="navbar-nav">
+                        <a href="/admin/dashboard" class="nav-link {{#if (eq page 'dashboard')}}active{{/if}}">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                        <a href="/admin/media/upload" class="nav-link {{#if (eq page 'upload')}}active{{/if}}">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Upload</span>
+                        </a>
+                        <a href="/admin/media/list" class="nav-link {{#if (eq page 'media')}}active{{/if}}">
+                            <i class="fas fa-photo-video"></i>
+                            <span>Media</span>
+                        </a>
+                        <a href="/admin/users" class="nav-link {{#if (eq page 'users')}}active{{/if}}">
+                            <i class="fas fa-users"></i>
+                            <span>Users</span>
+                        </a>
+                        <a href="/admin/transactions" class="nav-link {{#if (eq page 'transactions')}}active{{/if}}">
+                            <i class="fas fa-credit-card"></i>
+                            <span>Transactions</span>
+                        </a>
+                        <a href="/admin/subscriptions" class="nav-link {{#if (eq page 'subscriptions')}}active{{/if}}">
+                            <i class="fas fa-gem"></i>
+                            <span>Packages</span>
+                        </a>
+                    </div>
+                {{else}}
+                    <!-- User Navigation -->
+                    <div class="navbar-nav">
+                        <a href="/user/dashboard" class="nav-link {{#if (eq page 'dashboard')}}active{{/if}}">
+                            <i class="fas fa-home"></i>
+                            <span>Home</span>
+                        </a>
+                        <a href="/user/browse" class="nav-link {{#if (eq page 'browse')}}active{{/if}}">
+                            <i class="fas fa-search"></i>
+                            <span>Browse</span>
+                        </a>
+                        <a href="/user/wishlist" class="nav-link {{#if (eq page 'wishlist')}}active{{/if}}">
+                            <i class="fas fa-heart"></i>
+                            <span>Wishlist</span>
+                        </a>
+                        <a href="/user/downloads" class="nav-link {{#if (eq page 'downloads')}}active{{/if}}">
+                            <i class="fas fa-download"></i>
+                            <span>Downloads</span>
+                        </a>
+                        <a href="/user/subscribe" class="nav-link {{#if (eq page 'subscribe')}}active{{/if}}">
+                            <i class="fas fa-crown"></i>
+                            <span>Subscribe</span>
+                        </a>
+                    </div>
+                {{/if}}
+                
+                <!-- User Menu -->
+                <div class="navbar-user">
+                    <div class="user-dropdown">
+                        <button class="user-dropdown-toggle" id="userDropdownToggle">
+                            <div class="user-avatar">
+                                {{#if user.avatar_url}}
+                                    <img src="{{user.avatar_url}}" alt="{{user.full_name}}">
+                                {{else}}
+                                    <i class="fas fa-user"></i>
+                                {{/if}}
+                            </div>
+                            <span class="user-name">{{user.full_name}}</span>
+                            <i class="fas fa-chevron-down dropdown-arrow"></i>
+                        </button>
+                        
+                        <div class="user-dropdown-menu" id="userDropdownMenu">
+                            <div class="dropdown-header">
+                                <div class="user-info">
+                                    <div class="user-avatar-large">
+                                        {{#if user.avatar_url}}
+                                            <img src="{{user.avatar_url}}" alt="{{user.full_name}}">
+                                        {{else}}
+                                            <i class="fas fa-user"></i>
+                                        {{/if}}
+                                    </div>
+                                    <div class="user-details">
+                                        <h4>{{user.full_name}}</h4>
+                                        <p>{{user.email}}</p>
+                                        {{#if user.activeSubscription}}
+                                            <span class="subscription-badge active">
+                                                <i class="fas fa-crown"></i>
+                                                Premium
+                                            </span>
+                                        {{else}}
+                                            <span class="subscription-badge inactive">
+                                                <i class="fas fa-user"></i>
+                                                Free
+                                            </span>
+                                        {{/if}}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="dropdown-body">
+                                <a href="/user/profile" class="dropdown-item">
+                                    <i class="fas fa-user-edit"></i>
+                                    <span>Edit Profile</span>
+                                </a>
+                                <a href="/user/transactions" class="dropdown-item">
+                                    <i class="fas fa-receipt"></i>
+                                    <span>My Transactions</span>
+                                </a>
+                                {{#unless isAdmin}}
+                                    <a href="/user/subscribe" class="dropdown-item">
+                                        <i class="fas fa-crown"></i>
+                                        <span>Upgrade Plan</span>
+                                    </a>
+                                {{/unless}}
+                                <div class="dropdown-divider"></div>
+                                <a href="/logout" class="dropdown-item logout">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    <span>Logout</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {{else}}
+                <!-- Guest Navigation -->
+                <div class="navbar-nav">
+                    <a href="/login" class="nav-link">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Login</span>
+                    </a>
+                    <a href="/register" class="nav-link nav-cta">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Sign Up</span>
+                    </a>
+                </div>
+            {{/if}}
+        </div>
+    </div>
+</nav>

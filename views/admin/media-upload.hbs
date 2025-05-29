@@ -1,0 +1,424 @@
+<div class="container">
+    <div class="page-header">
+        <h1 class="page-title">Upload Media</h1>
+        <p class="page-subtitle">Add new files to your media library</p>
+    </div>
+    
+    <div class="upload-container">
+        <form id="mediaUploadForm" class="upload-form" enctype="multipart/form-data">
+            <!-- File Upload Area -->
+            <div class="file-upload-section">
+                <div class="file-upload-area" id="fileUploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h3>Drag & Drop Your Files Here</h3>
+                    <p>or <span class="upload-link">click to browse</span></p>
+                    <input type="file" id="mediaFile" name="file" accept="image/*,audio/*,video/*" hidden required>
+                    
+                    <div class="upload-limits">
+                        <div class="limit-item">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Max file size: 100MB</span>
+                        </div>
+                        <div class="limit-item">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Supported: Images, Audio, Video</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Upload Progress -->
+                <div class="upload-progress" id="uploadProgress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">0%</div>
+                </div>
+                
+                <!-- File Preview -->
+                <div class="upload-preview" id="uploadPreview" style="display: none;"></div>
+            </div>
+            
+            <!-- Upload Details -->
+            <div class="upload-details" id="uploadDetails" style="display: none;">
+                <div class="form-section">
+                    <h3 class="section-title">Media Information</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="title" class="form-label">Title *</label>
+                            <input type="text" id="title" name="title" class="form-input" placeholder="Enter media title" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea id="description" name="description" class="form-textarea" rows="4" placeholder="Describe your media content"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="category_id" class="form-label">Category *</label>
+                            <select id="category_id" name="category_id" class="form-select" required>
+                                <option value="">Select Category</option>
+                                {{#each categories}}
+                                    <option value="{{id}}">{{name}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="tags" class="form-label">Tags</label>
+                            <input type="text" id="tags" name="tags" class="form-input" placeholder="Enter tags separated by commas">
+                            <small class="form-hint">Use commas to separate multiple tags</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3 class="section-title">External Links <span class="optional">(Optional)</span></h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="shopee_link" class="form-label">
+                                <i class="fas fa-shopping-bag"></i>
+                                Shopee Product Link
+                            </label>
+                            <input type="url" id="shopee_link" name="shopee_link" class="form-input" placeholder="https://shopee.co.id/...">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="tiktok_link" class="form-label">
+                                <i class="fab fa-tiktok"></i>
+                                TikTok Link
+                            </label>
+                            <input type="url" id="tiktok_link" name="tiktok_link" class="form-input" placeholder="https://tiktok.com/...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3 class="section-title">Settings</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="is_featured" value="1">
+                                <span class="checkmark"></span>
+                                Featured Content
+                                <small class="form-hint">Mark as featured to highlight this content</small>
+                            </label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="is_active" value="1" checked>
+                                <span class="checkmark"></span>
+                                Active
+                                <small class="form-hint">Make this content immediately available</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                        <i class="fas fa-undo"></i>
+                        Reset
+                    </button>
+                    <button type="submit" class="btn btn-primary submit-btn" disabled>
+                        <i class="fas fa-upload"></i>
+                        Upload Media
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.upload-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.file-upload-section {
+    margin-bottom: var(--spacing-8);
+}
+
+.file-upload-area {
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-12);
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    background: var(--dark-surface);
+}
+
+.file-upload-area:hover,
+.file-upload-area.drag-over {
+    border-color: var(--primary-color);
+    background: rgba(254, 44, 85, 0.05);
+    transform: translateY(-2px);
+}
+
+.upload-icon {
+    font-size: 4rem;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-4);
+}
+
+.file-upload-area h3 {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--spacing-2);
+    color: var(--dark-text);
+}
+
+.file-upload-area p {
+    color: var(--dark-text-secondary);
+    margin-bottom: var(--spacing-6);
+}
+
+.upload-link {
+    color: var(--primary-color);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.upload-limits {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-6);
+    flex-wrap: wrap;
+}
+
+.limit-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    color: var(--dark-text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+.upload-progress {
+    margin-top: var(--spacing-6);
+    padding: var(--spacing-4);
+    background: var(--dark-surface);
+    border-radius: var(--radius-lg);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: var(--spacing-2);
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-full);
+    transition: width var(--transition-normal);
+    width: 0%;
+}
+
+.progress-text {
+    text-align: center;
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+.upload-preview {
+    margin-top: var(--spacing-6);
+    padding: var(--spacing-6);
+    background: var(--dark-surface);
+    border-radius: var(--radius-xl);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.file-preview-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+}
+
+.preview-content img,
+.preview-content video {
+    max-width: 200px;
+    max-height: 150px;
+    border-radius: var(--radius-lg);
+}
+
+.preview-content audio {
+    width: 300px;
+}
+
+.upload-details {
+    background: var(--dark-surface);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.form-section {
+    margin-bottom: var(--spacing-8);
+}
+
+.form-section:last-child {
+    margin-bottom: 0;
+}
+
+.section-title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    margin-bottom: var(--spacing-4);
+    color: var(--dark-text);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+}
+
+.optional {
+    font-weight: 400;
+    color: var(--dark-text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-4);
+    margin-bottom: var(--spacing-4);
+}
+
+.form-row:last-child {
+    margin-bottom: 0;
+}
+
+.form-group:only-child {
+    grid-column: 1 / -1;
+}
+
+.form-hint {
+    display: block;
+    margin-top: var(--spacing-1);
+    color: var(--dark-text-secondary);
+    font-size: var(--font-size-xs);
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-3);
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    display: none;
+}
+
+.checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    position: relative;
+    flex-shrink: 0;
+    margin-top: 2px;
+    transition: all var(--transition-fast);
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkmark {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.checkbox-label .form-hint {
+    margin-top: var(--spacing-1);
+    margin-left: 0;
+}
+
+.form-actions {
+    display: flex;
+    gap: var(--spacing-4);
+    justify-content: flex-end;
+    padding-top: var(--spacing-6);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+    .upload-container {
+        padding: 0 var(--spacing-4);
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-3);
+    }
+    
+    .upload-limits {
+        flex-direction: column;
+        gap: var(--spacing-3);
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+}
+</style>
+
+<script>
+$(document).ready(function() {
+    const uploadArea = $('#fileUploadArea');
+    const fileInput = $('#mediaFile');
+    const uploadDetails = $('#uploadDetails');
+    const submitBtn = $('.submit-btn');
+    
+    // Load categories
+    loadCategories();
+    
+    // Click to upload
+    uploadArea.on('click', function() {
+        fileInput.click();
+    });
+    
+    // Drag and drop events are handled by main.js
+    
+    // File selection
+    fileInput.on('change', function() {
+        const files = this.files;
+        if (files.length > 0) {
+            handleFileSelection(files[0]);
+        }
+    });
+    
+    function handleFileSelection(file) {
+        // Validate file
+        if (!validateFile(file)) return;
+        
+        // Show preview
+        showFilePreview(file);
+        
+        // Show upload details
+        uploadDetails.show();
+        submitBtn.prop('disabled', false);
+        
+        // Auto

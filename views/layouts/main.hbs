@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} | Media Management</title>
+    
+    <!-- CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="Professional media management platform with secure file sharing and subscription-based downloads">
+    <meta name="keywords" content="media, files, download, subscription, images, audio, video">
+    <meta name="author" content="Media Management Team">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{title}} | Media Management">
+    <meta property="og:description" content="Professional media management platform">
+    <meta property="og:type" content="website">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+</head>
+<body class="{{#if isAdmin}}admin-layout{{else}}user-layout{{/if}}">
+    <!-- Navigation -->
+    {{> navbar}}
+    
+    <!-- Flash Messages -->
+    {{#if messages}}
+        <div class="flash-messages">
+            {{#each messages.error}}
+                <div class="flash-message flash-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>{{this}}</span>
+                    <button class="flash-close" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            {{/each}}
+            
+            {{#each messages.success}}
+                <div class="flash-message flash-success">
+                    <i class="fas fa-check-circle"></i>
+                    <span>{{this}}</span>
+                    <button class="flash-close" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            {{/each}}
+            
+            {{#each messages.info}}
+                <div class="flash-message flash-info">
+                    <i class="fas fa-info-circle"></i>
+                    <span>{{this}}</span>
+                    <button class="flash-close" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            {{/each}}
+            
+            {{#each messages.warning}}
+                <div class="flash-message flash-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>{{this}}</span>
+                    <button class="flash-close" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            {{/each}}
+        </div>
+    {{/if}}
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        {{{body}}}
+    </main>
+    
+    <!-- Footer -->
+    {{> footer}}
+    
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading...</p>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="/js/main.js"></script>
+    {{#if isAdmin}}
+        <script src="/js/admin.js"></script>
+    {{else}}
+        <script src="/js/user.js"></script>
+    {{/if}}
+    
+    <!-- Auto-hide flash messages -->
+    <script>
+        $(document).ready(function() {
+            setTimeout(function() {
+                $('.flash-message').fadeOut(500, function() {
+                    $(this).remove();
+                });
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
